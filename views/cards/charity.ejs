@@ -1,0 +1,83 @@
+<% layout("./layouts/boilerplate") %>
+
+<style>
+    body {
+      background-color: #f4f6f9;
+    }
+    .dashboard-card {
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border: none;
+      background: #fff;
+    }
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+  </style>
+
+
+  <div class="container py-5">
+    <div class="card dashboard-card p-4 mx-auto" style="max-width: 700px;">
+      <h2 class="section-title">Update Charity</h2>
+
+      <p><strong>Current Charity:</strong> Helping Hands Foundation</p>
+      <p><strong>Current Contribution:</strong> 10%</p>
+
+      <form id="charityForm">
+        <div class="mb-3">
+          <label class="form-label">Select Charity</label>
+          <select class="form-select" name="charityName" required>
+            <option value="">Choose charity</option>
+            <option value="Helping Hands Foundation">Helping Hands Foundation</option>
+            <option value="Care for Children">Care for Children</option>
+            <option value="Food Relief Trust">Food Relief Trust</option>
+            <option value="Green Earth NGO">Green Earth NGO</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Contribution Percentage</label>
+          <select class="form-select" name="contribution" required>
+            <option value="">Select percentage</option>
+            <option value="5">5%</option>
+            <option value="10">10%</option>
+            <option value="15">15%</option>
+            <option value="20">20%</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-warning w-100">Update Charity</button>
+      </form>
+
+      <div class="mt-3 text-center">
+        <a href="/api/user/dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("charityForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const res = await fetch("/api/user/update-charity", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("token")
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        alert(result.message || "Charity updated successfully");
+      } catch (err) {
+        console.log(err);
+        alert("Something went wrong");
+      }
+    });
+  </script>

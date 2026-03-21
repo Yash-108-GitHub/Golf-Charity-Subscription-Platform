@@ -1,0 +1,154 @@
+<% layout("./layouts/boilerplate") %>
+
+<style>
+    body {
+      background-color: #f5f7fb;
+    }
+    .dashboard-card {
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+</style>
+
+
+  <div class="container py-4">
+    <!-- Welcome -->
+    <div class="card dashboard-card p-4 mb-4">
+      <h2 class="mb-1">Welcome, Yash</h2>
+      <p class="text-muted mb-0">Manage your subscription, golf scores, charity contribution, and winnings.</p>
+    </div>
+
+    <!-- Top Summary Cards -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-4">
+        <div class="card dashboard-card p-3">
+          <h5 class="section-title">Subscription Status</h5>
+          <p class="mb-2"><strong>Plan:</strong></p>
+         <a href="/api/v1/subscribe">
+          <button class="btn btn-primary btn-sm">Manage Subscription</button>
+        </a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card dashboard-card p-3">
+          <h5 class="section-title">Selected Charity</h5>
+          <p class="mb-2"><strong>Name:</strong> </p>
+          <p class="mb-2"><strong>Contribution:</strong></p>
+          <a href="/api/v1/update-charity">
+            <button class="btn btn-warning btn-sm">Update Charity</button>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card dashboard-card p-3">
+          <h5 class="section-title">Winnings Overview</h5>
+          <p class="mb-2"><strong>Total Wins:</strong></p>
+          <p class="mb-2"><strong>Payout Status:</strong> <span class="badge bg-info text-dark"></span></p>
+          <a href="/api/v1/result">
+            <button class="btn btn-success btn-sm">View Results</button>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Add Score Form -->
+      <div class="col-lg-5">
+        <div class="card dashboard-card p-4">
+          <h5 class="section-title">Add Golf Score</h5>
+          <form>
+            <div class="mb-3">
+              <label class="form-label">Score Value</label>
+              <input
+                type="number"
+                class="form-control"
+                placeholder="Enter score (1-45)"
+                min="1"
+                max="45"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Date</label>
+              <input type="date" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Add Score</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Latest Scores -->
+      <div class="col-lg-7">
+        <div class="card dashboard-card p-4">
+          <h5 class="section-title">Latest 5 Scores</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+              <thead class="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Score</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+              </tbody>
+            </table>
+          </div>
+          <small class="text-muted">Only the latest 5 scores are stored.</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Draw Participation -->
+    <div class="card dashboard-card p-4 mt-4">
+      <h5 class="section-title">Monthly Draw Participation</h5>
+      <p class="mb-2"><strong>Current Draw Month:</strong> March 2026</p>
+      <p class="mb-2"><strong>Status:</strong> Eligible</p>
+      <p class="mb-0"><strong>Last Result:</strong> Matched 3 scores - Won ₹500</p>
+    </div>
+  </div>
+
+
+<script>
+  document.getElementById("subscriptionForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await fetch("/api/v1/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("token")
+        },
+        body: JSON.stringify({
+          plan: data.plan,
+          paymentMethod: data.paymentMethod
+        })
+      });
+
+      const result = await res.json();
+      console.log(result);
+
+      if (!res.ok) {
+        return alert(result.message || "Request failed");
+      }
+
+      alert(result.message || "Subscription updated successfully");
+    } catch (err) {
+      console.log(err);
+      alert(err.message);
+    }
+  });
+</script>
