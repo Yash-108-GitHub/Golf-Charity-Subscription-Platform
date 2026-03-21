@@ -119,36 +119,81 @@
 
 
 <script>
-  document.getElementById("subscriptionForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem("token");
 
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
+    if (!token) {
+        alert("Please login first");
+        window.location.href = "/login";
+        return;
+    }
 
     try {
-      const res = await fetch("/api/v1/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + localStorage.getItem("token")
-        },
-        body: JSON.stringify({
-          plan: data.plan,
-          paymentMethod: data.paymentMethod
-        })
-      });
+        const res = await fetch("/api/v1/me", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
 
-      const result = await res.json();
-      console.log(result);
+        const data = await res.json();
+        console.log("ME API response:", data);
 
-      if (!res.ok) {
-        return alert(result.message || "Request failed");
-      }
+      
 
-      alert(result.message || "Subscription updated successfully");
+        const user = data.user;
+
+        document.getElementById("plan").innerText =
+            user.subscriptionPlan || "Not Subscribed";
+
+        document.getElementById("charityName").innerText =
+            user.charityName || "Not Selected";
+
+        document.getElementById("charityPercentage").innerText =
+            user.charityPercentage ? user.charityPercentage + "%" : "0%";
+
     } catch (err) {
-      console.log(err);
-      alert(err.message);
+        console.log("Dashboard load error:", err);
     }
-  });
+
+
+    // ==============================
+    // 2. ADD SCORE FORM
+    // ==============================
+    const scoreForm = document.getElementById("scoreForm");
+
+    if (scoreForm) {
+        scoreForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const value = document.getElementById("scoreValue").value;
+            const date = document.getElementById("scoreDate").value;
+
+            try {
+                const res = await fetch("/api/v1/add-score", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ value, date })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    return alert(data.message);
+                }
+
+                alert("Score added successfully");
+                location.reload(); // refresh dashboard
+
+            } catch (err) {
+                console.log(err);
+                alert("Error adding score");
+            }
+        });
+    }
+
+});
 </script>

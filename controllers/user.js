@@ -62,16 +62,25 @@ module.exports.login = async (req, res) =>{
             process.env.JWT_SECRET
         );
 
-        res
-         .status(200)
-         .redirect("/api/user/dashboard");
-    }catch(err){
+        // ✅ THIS SHOULD BE HERE
+        res.status(200).json({
+            message: "Login successful",
+            token,
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        });
+    }catch (err) {
+        // ❌ only error response here
         res.status(500).json({
             message: "server error",
             error: err.message
         });
     }
-}
+};
 
 module.exports.renderResultPage = (req, res) =>{
     res.render("cards/results");
