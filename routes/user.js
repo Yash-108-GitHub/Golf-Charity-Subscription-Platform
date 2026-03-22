@@ -26,4 +26,7 @@ router.route("/update-charity")
 router.route("/result")
  .get(userController.renderResultPage);
 
+router.route("/me")
+  .get(authMiddleware, userController.getMe);
+
 module.exports = router;
