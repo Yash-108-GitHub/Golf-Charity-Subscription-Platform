@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const Charity = require("../models/Charity")
 
 module.exports.renderSignupForm = (req, res) =>{
     res.render("users/signup");
@@ -198,48 +199,71 @@ module.exports.subscribe = async (req, res) => {
     }
 };
 
-module.exports.renderUpdateCharityForm = (req, res) =>{
-    res.render("cards/charity");
-}
+module.exports.renderUpdateCharityForm = async (req, res) => {
+  try {
+    const charities = await Charity.find({});
+    console.log("charities from db:", charities);
+
+    res.render("cards/charity", {
+      user: null,
+      charities
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+  }
+};
 
 module.exports.updateCharity = async (req, res) => {
-    try {
-        const { charityPercentage } = req.body;
+  try {
+    const userId = req.user.id;
+    const { charity, charityPercentage } = req.body;
 
-        if (!charityPercentage || charityPercentage < 10) {
-            return res.status(400).json({
-                message: "Charity percentage must be at least 10"
-            });
-        }
-
-        const user = await User.findById(req.user.id);
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        user.charityPercentage = charityPercentage;
-        await user.save();
-
-        res.status(200).json({
-            message: "Charity percentage updated successfully",
-            charityPercentage: user.charityPercentage
-        });
-    } catch (err) {
-        res.status(500).json({
-            message: "server error",
-            error: err.message
-        });
+    if (!charity || !charityPercentage) {
+      return res.status(400).json({
+        message: "Charity and contribution percentage are required"
+      });
     }
+
+    const charityDoc = await Charity.findOne({ name: charity });
+
+    if (!charityDoc) {
+      return res.status(404).json({
+        message: "Selected charity not found"
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        charity: charityDoc._id,
+        charityPercentage: Number(charityPercentage)
+      },
+      { new: true }
+    ).populate("charity");
+
+    return res.status(200).json({
+      message: "Charity updated successfully",
+      user
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Server error",
+      error: err.message
+    });
+  }
 };
 
 
 module.exports.getMe = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select("-password");
+        const user = await User.findById(req.user.id).populate("charity");
 
         if (!user) {
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({
+                message: "User not found"
+            });
         }
 
         res.status(200).json({ user });

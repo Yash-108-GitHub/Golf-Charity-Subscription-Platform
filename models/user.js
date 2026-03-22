@@ -23,6 +23,11 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    charity: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Charity"
+    },
+    
     scores: [{
         value: {
             type: Number,

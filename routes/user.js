@@ -29,4 +29,5 @@ router.route("/result")
 router.route("/me")
   .get(authMiddleware, userController.getMe);
 
+  
 module.exports = router;
