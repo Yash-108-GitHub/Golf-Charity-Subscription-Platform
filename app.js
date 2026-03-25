@@ -32,6 +32,8 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
+console.log(process.env.MONGO_URI);
+
 app.get("/", (req,res) =>{
     res.render("index");
 })
