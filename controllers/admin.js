@@ -1,3 +1,4 @@
+
 module.exports.renderDashboard = (req, res) => {
     try{
         res.render("admin/dashboard");

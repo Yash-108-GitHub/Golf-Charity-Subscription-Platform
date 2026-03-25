@@ -40,8 +40,10 @@ app.get("/", (req,res) =>{
 
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1", userRoutes);
-app.use("/api/user", dashboardRoutes);
 app.use("/api/admin", adminRoutes); 
+app.use("/api/user", dashboardRoutes);
+
+
 
 
 app.listen(3001, ()=>{
