@@ -7,6 +7,7 @@ const ejs = require("ejs");
 const ejsMate = require("ejs-mate");
 const userRoutes = require("./routes/user.js");
 const dashboardRoutes = require("./routes/dashboard.js");
+const adminRoutes = require("./routes/admin.js");
 
 const mongoose = require("mongoose");
 
@@ -39,6 +40,7 @@ app.get("/", (req,res) =>{
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1", userRoutes);
 app.use("/api/user", dashboardRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.listen(3001, ()=>{
     console.log("server is running on port 3001");
