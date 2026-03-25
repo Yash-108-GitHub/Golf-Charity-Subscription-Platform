@@ -45,7 +45,6 @@ app.use("/api/user", dashboardRoutes);
 
 
 
-
 app.listen(3001, ()=>{
     console.log("server is running on port 3001");
 })

@@ -5,4 +5,4 @@ module.exports.renderDashboard = (req, res) => {
         console.log(err.message);
         res.status(500).send("server error");
     }
-}
+} 
