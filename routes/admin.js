@@ -6,5 +6,4 @@ const adminController = require("../controllers/admin.js");
 router.route("/dashboard")
  .get(adminController.renderDashboard);
  
- 
 module.exports = router;
