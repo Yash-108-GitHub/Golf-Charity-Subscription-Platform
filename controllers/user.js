@@ -56,24 +56,25 @@ module.exports.login = async (req, res) =>{
             return res.status(400).json({message: "Invalid email or password"});
         }
 
+    
+
         const token = jwt.sign(
-            { id: user._id, 
-              role: user.role
-            },
+            { id: user._id, role: user.role },
             process.env.JWT_SECRET
         );
 
-        // ✅ THIS SHOULD BE HERE
-        res.status(200).json({
+        return res.status(200).json({
             message: "Login successful",
             token,
+            role: user.role,   // 🔥 important for frontend
             user: {
                 id: user._id,
                 username: user.username,
-                email: user.email,
-                role: user.role
+                email: user.email
             }
         });
+
+        
     }catch (err) {
         // ❌ only error response here
         res.status(500).json({
