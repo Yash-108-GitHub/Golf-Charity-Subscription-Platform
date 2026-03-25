@@ -32,7 +32,6 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-
 app.get("/", (req,res) =>{
     res.render("index");
 })
@@ -40,7 +39,8 @@ app.get("/", (req,res) =>{
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1", userRoutes);
 app.use("/api/user", dashboardRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/api/admin", adminRoutes); 
+
 
 app.listen(3001, ()=>{
     console.log("server is running on port 3001");
