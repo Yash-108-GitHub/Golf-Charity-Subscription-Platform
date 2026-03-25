@@ -74,7 +74,6 @@ module.exports.login = async (req, res) =>{
             }
         });
 
-        
     }catch (err) {
         // ❌ only error response here
         res.status(500).json({
